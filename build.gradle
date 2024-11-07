@@ -1,0 +1,34 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+plugins {
+    id 'com.gradleup.shadow' version '8.3.3'
+    id 'java'
+}
+
+description = 'observability-test'
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation(platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0"))
+    implementation('io.opentelemetry:opentelemetry-api')
+    //compileOnly('com.datadoghq:dd-trace-api:1.39.0')
+    //implementation('com.datadoghq:java-dogstatsd-client:4.4.3') // XXX note: 4.2.1 is not in maven central repo
+}
+
+jar {
+  manifest {
+    attributes(
+      "Main-Class": "com.gregor.observability.test.Main"
+    )
+  }
+}
+
+tasks.named('shadowJar', ShadowJar) {
+    archiveClassifier.set('')
+}
+
+assemble.dependsOn shadowJar
